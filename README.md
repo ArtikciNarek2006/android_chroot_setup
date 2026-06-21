@@ -1,3 +1,5 @@
+place all those files in /data/local/
+
 ### ON phone
 
 ```bash
@@ -18,15 +20,34 @@ sudo tar -cpvzf - . | ssh -i /home/revio/Desktop/test_ssh/key root@192.168.15.14
 ```
 
 #### setup seccond stage: on device
+
 ```bash
--> umount /data/local/debian
--> ./init_debian.sh
+umount /data/local/debian
+./enter_debian.sh
     ###### will give error. its ok
--> chroot "$CHROOT_PATH" /bin/bash -c "
+chroot "$CHROOT_PATH" /bin/bash -c "
     export HOME=/root
     export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     export LANG=C.UTF-8
     exec bash
 "
+/debootstrap/debootstrap --second-stage
+exit
+./stop_debian.sh
+./enter_debian.sh
+```
+
+#### Final setup.
+
+disable APT sandbox if needed
+```bash
+echo "APT::Sandbox::User "root";" > /etc/apt/apt.conf.d/00-no-sandbox
+apt update && apt upgrade -y
+```
+
+#### Install usefull
+
+```bash
+apt update && apt install wget curl tree command-not-found vim fastfetch unzip zip sudo hollywood  cmatrix ca-certificates git-all python3 openssl ffmpeg
 ```
 
